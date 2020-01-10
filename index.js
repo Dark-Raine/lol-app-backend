@@ -3,6 +3,7 @@ const app = express()
 const fetch = require('node-fetch')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+require('dotenv').config()
 const port = 3001
 app.use(cors())
 app.use(bodyParser.json())
@@ -16,7 +17,7 @@ const setDDragonVersion =  async () => {
 }
 const main = async () => {
     let version = await setDDragonVersion()
-    const APIKEY = 'RGAPI-24ffee70-3ad6-4a58-aa19-a14bb586555f'
+    const APIKEY = process.env.APIKEY
     const APIQuery = `?api_key=${APIKEY}`
     const summonerProfile = 'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name'
     const profileIcon = `http://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/`
