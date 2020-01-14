@@ -1,14 +1,7 @@
-const express = require('express')
-const app = express()
+const environment = require('./environment')
+const app = environment.config()
 const fetch = require('node-fetch')
-const cors = require('cors')
-const bodyParser = require('body-parser')
-require('dotenv').config()
 const port = 3001
-app.use(cors())
-app.use(bodyParser.json())
-
-
 
 const setDDragonVersion =  async () => {
     return fetch('https://ddragon.leagueoflegends.com/api/versions.json')
@@ -40,10 +33,7 @@ const main = async () => {
         return CMObject
         
     }
-    
 
-    
-    
     app.get('/', (req,res) => {
         // console.log(req)
         res.json({message: 'hello'})
