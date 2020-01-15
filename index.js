@@ -1,72 +1,53 @@
 const environment = require('./environment')
 const app = environment.config()
 const fetch = require('node-fetch')
+const mongoose = require('mongoose')
 const port = 3001
+const { summonerProfile,summonerCM, APIAuth, loadingScreenImg, profileIcon } = require('./apis/lol/endpoints')
+const {setDDragonVersion,getChampionReferences, synchronizePatchVersion} = require('./apis/lol/functions')
 
-const setDDragonVersion =  async () => {
-    return fetch('https://ddragon.leagueoflegends.com/api/versions.json')
-    .then(resp => resp.json())
-    .then(vList => vList[0])
-}
 const main = async () => {
     let version = await setDDragonVersion()
-    const APIKEY = process.env.APIKEY
-    const APIQuery = `?api_key=${APIKEY}`
-    const summonerProfile = 'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name'
-    const profileIcon = `http://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/`
-    const summonerCM = 'https://euw1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/'
-
+    let championsList = await getChampionReferences(version)
     const championImg = champion => `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion}`
-    const loadingScreenImg = name => `http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${name}_0.jpg`
     
-    const getChampionReferences = async () => {
-        return fetch(`http://ddragon.leagueoflegends.com/cdn/${version}/data/en_GB/champion.json`)
-        .then(resp => resp.json())
-    } 
-    let championsList = await getChampionReferences()
-
     const appendChampionData = CMObject => {
         CMObject.championId = Object.values(championsList.data)
         .find(champion => parseInt(champion.key) === CMObject.championId)
         CMObject.championId.image.full = championImg(CMObject.championId.image.full)
         CMObject.championId.image.loading = loadingScreenImg(CMObject.championId.id)
         return CMObject
-        
     }
 
-    app.get('/', (req,res) => {
-        // console.log(req)
-        res.json({message: 'hello'})
-    })
     app.post('/', (req,res) => {
         const { name } = req.body
-        const url = `${summonerProfile}/${name}?api_key=${APIKEY}`;
-        // console.log(` that goddamn url ${url}`)
+        const url = `${summonerProfile}/${name}${APIAuth}`;
         fetch(url)
         .then(resp => resp.json())
         .then(profile => {
-            return fetch(summonerCM+profile.id+APIQuery)
+            return fetch(summonerCM+profile.id+APIAuth)
             .then(resp => resp.json())
             .then(CMObject => {
-                // console.log(CMObject)
                 CMObject = Object.values(CMObject).map(champion => appendChampionData(champion))
                 profile.CMList = CMObject
-                profile.profileIconId = profileIcon+profile.profileIconId+".png"
+                profile.profileIconId = profileIcon(version)+profile.profileIconId+".png"
                 return profile
             })
             .then(() => profile)
         })
         .then(profile => res.json(profile))
+        .catch(err => res.json(err.message))
     })
+
+    mongoose.connect('mongodb://127.0.0.1:27017/lolfl',{ useNewUrlParser: true,  useUnifiedTopology: true,useFindAndModify: false  }, ()=> {
+        console.log('connected!')
+        synchronizePatchVersion()
+    })
+
     
     app.listen(port)
     console.log(`online on port ${port}`)
     console.log(`Patch version  ${version}`)
-    // console.log(`Champions  ${Object.keys(championsList.data)}`)
-    // console.log(version)
-    setInterval(async() => {
-        version = await setDDragonVersion()
-    }, 1209600000)
 }
 
 main()
