@@ -1,4 +1,5 @@
-const { versions, champions } = require('./endpoints')
+const { endpoints } = require('./endpoints')
+const { versions,champions,championImg,loadingScreenImg } = endpoints
 const fetch = require('node-fetch')
 const LolApiConfig = require('../../models/riotApiConfig')
 
@@ -37,7 +38,17 @@ const synchronizePatchVersion = async() => {
     return toDisplay.patchVersion
 }
 
+const appendChampionData = (version,championsList,CMObject) => {
+    CMObject.championId = Object.values(championsList.data)
+    .find(champion => parseInt(champion.key) === CMObject.championId)
+    CMObject.championId.image.full = championImg(version,CMObject.championId.image.full)
+    CMObject.championId.image.loading = loadingScreenImg(CMObject.championId.id)
+    return CMObject
+}
+
 module.exports = {
     getChampionReferences,
-    synchronizePatchVersion
+    synchronizePatchVersion,
+    endpoints,
+    appendChampionData
 }
