@@ -4,10 +4,18 @@ const fetch = require('node-fetch')
 const mongoose = require('mongoose')
 const port = 3001
 const { summonerProfile,summonerCM, APIAuth, loadingScreenImg, profileIcon } = require('./apis/lol/endpoints')
-const {setDDragonVersion,getChampionReferences, synchronizePatchVersion} = require('./apis/lol/functions')
+const {getChampionReferences, synchronizePatchVersion} = require('./apis/lol/functions')
+
+
+mongoose.connect('mongodb://127.0.0.1:27017/lolfl',{ useNewUrlParser: true,  useUnifiedTopology: true,useFindAndModify: false  }, ()=> {
+    console.log('connected!')
+    // version =  synchronizePatchVersion() 
+})
 
 const main = async () => {
-    let version = await setDDragonVersion()
+    // let version = await setDDragonVersion()
+    let version = await synchronizePatchVersion()
+    // console.log(version)
     let championsList = await getChampionReferences(version)
     const championImg = champion => `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion}`
     
@@ -28,6 +36,7 @@ const main = async () => {
             return fetch(summonerCM+profile.id+APIAuth)
             .then(resp => resp.json())
             .then(CMObject => {
+                // console.log(CMObject)
                 CMObject = Object.values(CMObject).map(champion => appendChampionData(champion))
                 profile.CMList = CMObject
                 profile.profileIconId = profileIcon(version)+profile.profileIconId+".png"
@@ -38,13 +47,7 @@ const main = async () => {
         .then(profile => res.json(profile))
         .catch(err => res.json(err.message))
     })
-
-    mongoose.connect('mongodb://127.0.0.1:27017/lolfl',{ useNewUrlParser: true,  useUnifiedTopology: true,useFindAndModify: false  }, ()=> {
-        console.log('connected!')
-        synchronizePatchVersion()
-    })
-
-    
+   
     app.listen(port)
     console.log(`online on port ${port}`)
     console.log(`Patch version  ${version}`)
