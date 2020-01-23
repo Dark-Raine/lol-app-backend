@@ -6,7 +6,9 @@ const endpoints = {
     APIAuth: `?api_key=${process.env.APIKEY}`,
     loadingScreenImg: name => `http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${name}_0.jpg`,
     profileIcon: version => `http://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/`,
-    championImg: (version,champion) => `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion}`
+    championImg: (version,champion) => `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion}`,
+    verification: "lolar",
+    verifyAccount: 'https://euw1.api.riotgames.com/lol/platform/v4/third-party-code/by-summoner/'
 }
 
 module.exports = {
