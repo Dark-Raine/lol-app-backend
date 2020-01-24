@@ -38,11 +38,11 @@ const { summonerProfile,summonerCM, APIAuth, profileIcon,verification,verifyAcco
         fetch(verifyAccount+accountId+APIAuth)
         .then(resp => resp.json())
         .then(summonerCode => {
-            // console.log(summonerCode,verification)
+            console.log(summonerCode,verification)
             const verified = summonerCode === verification
-            verified ? res.status(200).json(verified) : res.status(404).json(verified)
+            verified ? res.status(200).json({verified}) : res.status(404).json({verified})
         })
-        .catch(err => res.json(err.message))
+        .catch(err => res.json({error: err.message}))
     })
 
     module.exports = router
