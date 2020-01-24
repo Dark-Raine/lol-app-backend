@@ -42,7 +42,7 @@ const { summonerProfile,summonerCM, APIAuth, profileIcon,verification,verifyAcco
             const verified = summonerCode === verification
             verified ? res.status(200).json({verified}) : res.status(404).json({verified})
         })
-        .catch(err => res.json(err.message))
+        .catch(err => res.json({error: err.message}))
     })
 
     module.exports = router
