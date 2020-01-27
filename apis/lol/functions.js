@@ -17,8 +17,7 @@ const getChampionReferences = async (version) => {
 const versionChecker = async(toCheck) => {
     const query = {marker: true}
     if ((await LolApiConfig.find(query)).length === 1) {
-        // console.log('found')
-        const upd = await LolApiConfig.findOneAndUpdate(query,{patchVersion: toCheck})
+        const upd = await LolApiConfig.findOneAndUpdate(query,{patchVersion: toCheck},{new:true})
         return upd
     } else {
         console.log('created')
@@ -27,7 +26,6 @@ const versionChecker = async(toCheck) => {
             marker: true
         })
         patchVersion.save()
-        // console.log(patchVersion)
     }
 }
 
@@ -39,10 +37,11 @@ const synchronizePatchVersion = async() => {
 }
 
 const appendChampionData = (version,championsList,CMObject) => {
-    CMObject.championId = Object.values(championsList.data)
+    const modifiedCData = Object.values(championsList.data)
     .find(champion => parseInt(champion.key) === CMObject.championId)
-    CMObject.championId.image.full = championImg(version,CMObject.championId.image.full)
-    CMObject.championId.image.loading = loadingScreenImg(CMObject.championId.id)
+    CMObject[modifiedCData.id] = modifiedCData
+    CMObject[modifiedCData.id].image.full = championImg(version,CMObject[modifiedCData.id].image.full)
+    CMObject[modifiedCData.id].image.loading = loadingScreenImg(CMObject[modifiedCData.id].id)
     return CMObject
 }
 
