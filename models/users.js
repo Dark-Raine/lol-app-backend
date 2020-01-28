@@ -35,6 +35,10 @@ const users = mongoose.Schema({
         type: String,
         unique: true,
         required: true
+    },
+    password_digest:{
+        type: String,
+        required: true
     }
 })
 
