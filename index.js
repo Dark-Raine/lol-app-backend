@@ -2,9 +2,11 @@ const environment = require('./environment')
 const app = environment.config()
 const mongoose = require('mongoose')
 const summonerDataRoutes = require('./routes/summonerData')
+const userRoutes = require('./routes/userroutes')
 const port = 3001
 
 app.use('/summonerdata', summonerDataRoutes)
+app.use('/users', userRoutes)
 app.listen(port)
 console.log(`online on port ${port}`)
     

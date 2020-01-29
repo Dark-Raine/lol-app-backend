@@ -2,6 +2,8 @@ const { endpoints } = require('./endpoints')
 const { versions,champions,championImg,loadingScreenImg } = endpoints
 const fetch = require('node-fetch')
 const LolApiConfig = require('../../models/riotApiConfig')
+const bcrypt = require('bcrypt')
+const salt = parseInt(process.env.SALT)
 
 const getDDragonVersion =  async () => {
     return fetch(versions)
@@ -45,9 +47,21 @@ const appendChampionData = (version,championsList,CMObject) => {
     return CMObject
 }
 
+const digestPassword = async (plainTextPassword) => {
+    const toSend = await bcrypt.hash(plainTextPassword, salt)
+    return toSend
+}
+
+const validatePassword = async (passwordToValidate) => {
+    const validated = await bcrypt.compare(passwordToValidate, hash)
+    return validated
+}
+
 module.exports = {
     getChampionReferences,
     synchronizePatchVersion,
     endpoints,
-    appendChampionData
+    appendChampionData,
+    digestPassword,
+    validatePassword
 }

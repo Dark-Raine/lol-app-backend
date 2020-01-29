@@ -5,6 +5,7 @@ const { getChampionReferences, synchronizePatchVersion,endpoints,appendChampionD
 const { summonerProfile,summonerCM, APIAuth, profileIcon,verification,verifyAccount } = endpoints
     
     router.post('/', async (req,res) => {
+        console.log(req.headers)
         let version = await synchronizePatchVersion()
         let championsList = await getChampionReferences(version)
         const { name } = req.body
