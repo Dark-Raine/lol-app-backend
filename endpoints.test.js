@@ -14,5 +14,5 @@ test('expect the versions endpoint response code to be 200', async ()=>{
 test('expect the versions endpoint response to be an array', async ()=>{
     const response = await fetch(endpoints.versions).then(res => res.json())
 
-    expect(typeof response).toBe(typeof [])
+    expect(typeof response).toEqual(typeof [])
 })
