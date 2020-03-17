@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const fetch = require('node-fetch')
-const { getChampionReferences, synchronizePatchVersion,endpoints,appendChampionData, getRequestParser, profileRestructure } = require('../apis/lol/functions')
-const { summonerProfile,summonerCM, APIAuth, profileIcon,verification,verifyAccount } = endpoints
+const { endpoints, getRequestParser, profileRestructure } = require('../apis/lol/functions')
+const { summonerProfile, APIAuth, verification, verifyAccount } = endpoints
     
     router.post('/', async (req,res) => {
         const { name } = req.body
