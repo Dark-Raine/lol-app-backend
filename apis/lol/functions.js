@@ -1,5 +1,5 @@
 const { endpoints } = require('./endpoints')
-const { versions,champions,championImg,loadingScreenImg } = endpoints
+const { versions,champions,championImg,loadingScreenImg, summonerCM, APIAuth, profileIcon } = endpoints
 const fetch = require('node-fetch')
 const LolApiConfig = require('../../models/riotApiConfig')
 const bcrypt = require('bcrypt')
@@ -57,11 +57,33 @@ const validatePassword = async (passwordToValidate) => {
     return validated
 }
 
+const getRequestParser = (url) => {
+    return fetch(url)
+    .then(resp => resp.json())
+}
+
+const objectModifier = async (CMObject,profile) => {
+    let version = await synchronizePatchVersion()
+    let championsList = await getChampionReferences(version)
+    CMObject = Object.values(CMObject).map(champion => appendChampionData(version,championsList,champion))
+    profile.CMList = CMObject
+    profile.profileIconId = profileIcon(version)+profile.profileIconId+".png"
+    return profile
+}
+
+const profileRestructure = profile => {
+    const url = summonerCM+profile.id+APIAuth
+    return getRequestParser(url)
+    .then(CMObject => objectModifier(CMObject,profile))
+}
+
 module.exports = {
     getChampionReferences,
     synchronizePatchVersion,
     endpoints,
     appendChampionData,
     digestPassword,
-    validatePassword
+    validatePassword,
+    getRequestParser,
+    profileRestructure
 }
