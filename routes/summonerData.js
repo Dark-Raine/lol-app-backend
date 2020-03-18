@@ -7,7 +7,14 @@ const { summonerProfile, verification, verifyAccount } = endpoints
         const { name } = req.body
         const url = urlBuilder(summonerProfile,name)
         const parsedData = await getRequestParser(url)
-        apiResponseChecker(parsedData,res,profileRestructure)
+        apiResponseChecker(parsedData,res)
+    })
+
+    router.post('/masterylist', async function getdata(req,res)  {
+        const { name } = req.body
+        const url = urlBuilder(summonerProfile,name)
+        const parsedData = await getRequestParser(url)
+        apiResponseChecker(parsedData,res, profileRestructure)
     })
     
     router.get('/verification', (req,res)=>{
