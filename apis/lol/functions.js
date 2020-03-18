@@ -85,6 +85,15 @@ const urlBuilder = (baseUrl, parameter) => {
     return baseUrl+parameter+APIAuth
 }
 
+const apiResponseChecker = async (parsedData,res,callback = null) => {
+    if (parsedData.status) {
+        res.status(404).json(parsedData.status)
+    } else {
+        !!callback ? res.json(await callback(parsedData)) : res.json(parsedData)
+    }
+}
+
+// const restructuredProfile = await profileRestructure(profile)
 module.exports = {
     getChampionReferences,
     synchronizePatchVersion,
@@ -95,5 +104,6 @@ module.exports = {
     getRequestParser,
     profileRestructure,
     verifySummonerCode,
-    urlBuilder
+    urlBuilder,
+    apiResponseChecker
 }
