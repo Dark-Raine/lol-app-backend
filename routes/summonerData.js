@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const fetch = require('node-fetch')
 const { endpoints, getRequestParser, profileRestructure, verifySummonerCode, urlBuilder } = require('../apis/lol/functions')
 const { summonerProfile, verification, verifyAccount } = endpoints
     
