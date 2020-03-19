@@ -11,8 +11,8 @@ const getDDragonVersion =  async () => {
 }
 
 const getChampionReferences = async (version) => {
-    const upTodateChampionsList = champions(version)
-    return await getRequestParser(upTodateChampionsList)
+    const upToDateChampionsList = champions(version)
+    return await getRequestParser(upToDateChampionsList)
 }
 
 const versionChecker = async(toCheck) => {
